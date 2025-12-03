@@ -1,174 +1,276 @@
-# Demonstrating Quarto for GitHub READMEs
+# Data Wrangling Final for GitHub
+Drew Berkland
 
-
-## Section Header
-
-You’ll want to make use of sections and subsections to organize your
-document. Think of the sections as broad categories, and subsections as
-more specific topics within those categories. I can make bigger
-statements at this level.
-
-### Subsection Header
-
-Subsections are useful for breaking ideas down and adding details. This
-is also likely where you’ll want to add code blocks.
-
-It will be worth noting some chunk options that you might find useful.
-
-If I want to hide code but show output, I can use `echo: false`.
-
-    4
-
-If I want to hide output but show code, I can use `results: 'hide'`.
+## File Uploads
 
 ``` python
-2 + 2
+import pandas as pd
+data= pd.read_csv("C:/Users/drewb/Downloads/MLB_Player_Data.csv")
 ```
 
-    4
-
-Maybe I want to show the code, but not run it. I can use `eval: false`.
+## Question 1: How do performance statistics compare between HOFers and Non HOFers?
 
 ``` python
-2 + 2
+data['HOF Status'] = data['HOF Status'].astype(str).str.lower()
+
+data['HOF Status'] = data['HOF Status'].apply(lambda x: 1 if x in ['true'] else 0)
+
+numeric_cols = data.select_dtypes(include='number').columns.tolist()
+
+hof_compare = data.groupby('HOF Status')[numeric_cols].mean()
+
+hof_compare
 ```
 
-In most of your chunks, you’ll probably want to turn off messages and
-warnings. You might notice, though, that I did that globally in the
-execute key in the header above. But if you want to do it in a specific
-chunk, you can use:
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+&#10;    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+&#10;    .dataframe thead th {
+        text-align: right;
+    }
+</style>
 
-## Loading Data and Models
+|  | HOF Status | WAR | First Season | Last Season | Debut Age | Final Season Age | G | PA | AB | R | ... | IBB | WAA | oWAR | dWAR | Rbat | Rdp | Rbaser | Rbaser + Rdp | Rfield | Seasons Played |
+|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|----|
+| HOF Status |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| 0 | 0.0 | 17.308546 | 1980.061627 | 1992.259655 | 22.505341 | 34.703369 | 1335.382909 | 4905.195563 | 4368.626952 | 581.608053 | ... | 39.417420 | 1.065818 | 17.282416 | 0.002629 | 12.682827 | -0.298274 | 0.806081 | 0.529992 | 1.345111 | 0.014158 |
+| 1 | 1.0 | 72.163768 | 1971.869565 | 1990.275362 | 20.710145 | 39.115942 | 2461.724638 | 10264.289855 | 8995.536232 | 1411.043478 | ... | 138.956522 | 38.086957 | 68.643478 | 1.388406 | 341.942029 | -3.246377 | 18.173913 | 14.942029 | 34.347826 | 18.405797 |
 
-If your project relies on heavy computations (either for the data prep
-or modeling), you’ll probably want to show your work in a code chunk
-that does not evaluate.
+<p>2 rows × 41 columns</p>
+</div>
+
+First, I cleaned the binary HOF Status column to make sure all of the
+T/F values were lowercase. Then, I used the lambda function to assign
+numeric values (1 or 0) to the HOF Status column. A player with HOF
+Status = 1 is a HOFer. From there, I was able to run the mean of each
+numeric column to compare the performance statistics between HOfer and
+Non HOFer
+
+Now, I will vizualize these stats using a for loop that iterates through
+each numeric stat, creating a box plot for each one. This will further
+respond to the question I posed.
 
 ``` python
-'''
-Imagine that this is a long code block that reads data
-and then starts your wrangling tasks. If it takes 
-over a minute to run, you'll probably want to have
-that work saved in a script and write your data out
-to a file.
-'''
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+numeric_stats = data.select_dtypes(include="number").columns
+
+for stat in numeric_stats:
+    plt.figure(figsize=(6, 4))
+    sns.boxplot(data=data, x="HOF Status", y=stat)
+    plt.title(f"HOF vs Non-HOF: {stat}")
+    plt.xlabel("HOF Status")
+    plt.ylabel(stat)
+    plt.tight_layout()
+    plt.show()
 ```
 
-You can quietly load in your prepped data in another chunk.
+![](readme_files/figure-commonmark/cell-4-output-1.png)
 
-The same holds true for models, especially if you’re fitting complex
-models that take
+![](readme_files/figure-commonmark/cell-4-output-2.png)
 
-## Rendering Outputs
+![](readme_files/figure-commonmark/cell-4-output-3.png)
 
-When I render this document, the output will be ready to appear as the
-`readme` on my GitHub repository. Let’s see how that might look with
-some plots and tables.
+![](readme_files/figure-commonmark/cell-4-output-4.png)
 
-Notice below that I’m not going to print my code, I just want it to run.
+![](readme_files/figure-commonmark/cell-4-output-5.png)
 
-Let’s see what a simple plot looks like.
+![](readme_files/figure-commonmark/cell-4-output-6.png)
+
+![](readme_files/figure-commonmark/cell-4-output-7.png)
+
+![](readme_files/figure-commonmark/cell-4-output-8.png)
+
+![](readme_files/figure-commonmark/cell-4-output-9.png)
+
+![](readme_files/figure-commonmark/cell-4-output-10.png)
+
+![](readme_files/figure-commonmark/cell-4-output-11.png)
+
+![](readme_files/figure-commonmark/cell-4-output-12.png)
+
+![](readme_files/figure-commonmark/cell-4-output-13.png)
+
+![](readme_files/figure-commonmark/cell-4-output-14.png)
+
+![](readme_files/figure-commonmark/cell-4-output-15.png)
+
+![](readme_files/figure-commonmark/cell-4-output-16.png)
+
+![](readme_files/figure-commonmark/cell-4-output-17.png)
+
+![](readme_files/figure-commonmark/cell-4-output-18.png)
+
+![](readme_files/figure-commonmark/cell-4-output-19.png)
+
+![](readme_files/figure-commonmark/cell-4-output-20.png)
+
+![](readme_files/figure-commonmark/cell-4-output-21.png)
+
+![](readme_files/figure-commonmark/cell-4-output-22.png)
+
+![](readme_files/figure-commonmark/cell-4-output-23.png)
+
+![](readme_files/figure-commonmark/cell-4-output-24.png)
+
+![](readme_files/figure-commonmark/cell-4-output-25.png)
+
+![](readme_files/figure-commonmark/cell-4-output-26.png)
+
+![](readme_files/figure-commonmark/cell-4-output-27.png)
+
+![](readme_files/figure-commonmark/cell-4-output-28.png)
+
+![](readme_files/figure-commonmark/cell-4-output-29.png)
+
+![](readme_files/figure-commonmark/cell-4-output-30.png)
+
+![](readme_files/figure-commonmark/cell-4-output-31.png)
+
+![](readme_files/figure-commonmark/cell-4-output-32.png)
+
+![](readme_files/figure-commonmark/cell-4-output-33.png)
+
+![](readme_files/figure-commonmark/cell-4-output-34.png)
+
+![](readme_files/figure-commonmark/cell-4-output-35.png)
+
+![](readme_files/figure-commonmark/cell-4-output-36.png)
+
+![](readme_files/figure-commonmark/cell-4-output-37.png)
+
+![](readme_files/figure-commonmark/cell-4-output-38.png)
+
+![](readme_files/figure-commonmark/cell-4-output-39.png)
+
+![](readme_files/figure-commonmark/cell-4-output-40.png)
+
+![](readme_files/figure-commonmark/cell-4-output-41.png)
+
+The box plots clearly show that key statistics such as WAR, BA, WAA,
+OPS, SLG are significantly higher amongst HOFers. This is to be
+expected, but it shows that each statistical categroy is much higher.
+One thing that jumps out to me is the amount of games played between
+HOFers and Non HOFers. HOFers have more longevity in the game which
+allows them more time to post their high statistics. This is shown
+through the aggregated mean code block and the box plot for loop.
+
+## Question 2: How can we look at WAR to predict HOF Status?
+
+WAR is a big statistic used in the MLB today. I wanted to run a model to
+show how it affects HOF status. I first did this through bootstrap
+sampling.
 
 ``` python
-data = {
-    'x': np.linspace(0, 10, 100),
-    'y': np.sin(np.linspace(0, 10, 100))
-}
+import numpy as np
+import statsmodels.api as sm
+import seaborn as sns
+import matplotlib.pyplot as plt
 
-df = pd.DataFrame(data)
+bootstrap_samples = 100
+t_values = []
 
-sns.lineplot(data=df, x='x', y='y')
-plt.title('Sine Wave')
-plt.xlabel('X-axis')
-plt.ylabel('Y-axis')
+for i in range(bootstrap_samples):
+    sample = data.sample(frac=1, replace=True)
+    model = sm.formula.ols(f'Q("WAR") ~ Q("HOF Status")', data=sample).fit()
+    t_val = model.tvalues['Q("HOF Status")']
+    t_values.append(t_val)
+
+sns.histplot(t_values)
+plt.title("Bootstrap t-values for HOF Status effect on WAR")
 plt.show()
 ```
 
-![](readme_files/figure-commonmark/cell-8-output-1.png)
+![](readme_files/figure-commonmark/cell-5-output-1.png)
 
-This is where I am going to offer some explanations about the sine wave
-above.
+The bootstrap tvalues model shows that a player’s WAR is signifcant in
+predicting whether they will make the HOF or not. This means looking at
+WAR is highly reliable in determinig HOF Status.
 
-Now let’s see what a table looks like.
-
-``` python
-data_table = {
-    'A': [1, 2, 3, 4, 5],
-    'B': ['a', 'b', 'c', 'd', 'e'],
-    'C': [10.5, 20.3, 30.2, 40.1, 50.0]
-}
-df_table = pd.DataFrame(data_table)
-df_table.head().to_markdown()
-```
-
-Notice the use of `to_markdown()` to render the table nicely in GitHub’s
-markdown format. It is a small thing that will make a big in difference
-in how your document looks!
-
-Now, let’s see what some linear model output looks like.
+Next, I wanted to see the magnitude, direction, and p-value significance
+of WAR on HOF Status. I ran a simple regression here.
 
 ``` python
-import statsmodels.api as sm    
-X = df[['x']]
-y = df['y']
-X = sm.add_constant(X) 
-model = sm.OLS(y, X).fit()
-summary_table = model.summary().tables[1] 
-print(summary_table)
+import statsmodels.formula.api as smf
+
+regression = smf.ols("WAR ~ Q('HOF Status')", data=data).fit()
+regression.summary()
 ```
 
-    ==============================================================================
-                     coef    std err          t      P>|t|      [0.025      0.975]
-    ------------------------------------------------------------------------------
-    const          0.2657      0.133      1.999      0.048       0.002       0.529
-    x             -0.0173      0.023     -0.753      0.453      -0.063       0.028
-    ==============================================================================
+|                   |                  |                     |           |
+|-------------------|------------------|---------------------|-----------|
+| Dep. Variable:    | WAR              | R-squared:          | 0.377     |
+| Model:            | OLS              | Adj. R-squared:     | 0.376     |
+| Method:           | Least Squares    | F-statistic:        | 775.7     |
+| Date:             | Wed, 03 Dec 2025 | Prob (F-statistic): | 6.30e-134 |
+| Time:             | 09:01:43         | Log-Likelihood:     | -5382.5   |
+| No. Observations: | 1286             | AIC:                | 1.077e+04 |
+| Df Residuals:     | 1284             | BIC:                | 1.078e+04 |
+| Df Model:         | 1                |                     |           |
+| Covariance Type:  | nonrobust        |                     |           |
 
-Notice how I indexed into the summary table object to just get the
-coefficients table?
+OLS Regression Results
 
-You migth want to talk about your coefficients and there are two ways
-that you can do that:
+|                 |         |         |        |          |         |         |
+|-----------------|---------|---------|--------|----------|---------|---------|
+|                 | coef    | std err | t      | P\>\|t\| | \[0.025 | 0.975\] |
+| Intercept       | 17.3085 | 0.456   | 37.938 | 0.000    | 16.414  | 18.204  |
+| Q('HOF Status') | 54.8552 | 1.970   | 27.851 | 0.000    | 50.991  | 58.719  |
 
-1.  Manually type out your interpretations below the table.
-2.  Use code to extract the coefficients and generate text
-    automatically.
+|                |         |                   |          |
+|----------------|---------|-------------------|----------|
+| Omnibus:       | 540.437 | Durbin-Watson:    | 1.734    |
+| Prob(Omnibus): | 0.000   | Jarque-Bera (JB): | 4071.999 |
+| Skew:          | 1.769   | Prob(JB):         | 0.00     |
+| Kurtosis:      | 10.967  | Cond. No.         | 4.45     |
 
-Option number 1, while more straightforward, is not the choice. Option
-number 2 is more dynamic and reproducible, especially if you plan to
-update your model or data in the future.
+<br/><br/>Notes:<br/>[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+
+Hall of Famers average roughly 55 more WAR than non-HOF players, meaning
+WAR is a separator between the groups. The model explains about 38% of
+the variation in career WAR shown by R- Squared. The p-value is below
+.05 indicating a significant relationship.
+
+One thing to note here is that while this variable is significant and
+his positive direction, the lower r-squared means that there are other
+strong predictors of HOF status outside of WAR.
+
+## Question 3: How does batting average differ by decade and HOF Status?
+
+In baseball, there are arguments that hitters are focusing less on
+average and more on power. Therefore, power numbers (SLG) are up and
+average numbers are down. I wanted to test this theory and see the trend
+between the two classes I made earlier of HOFer and non HOFer.
 
 ``` python
-params = model.params
-intercept = params['const']
-slope = params['x'] 
+data['decade'] = (data['Last Season'] // 10) * 10
+
+ba_pivot = data.pivot_table(index='decade',columns='HOF Status', values='BA', aggfunc='mean')
+
+print(ba_pivot)
 ```
 
-Now that those are out, I can use inline chunks to reference them in my
-text. You can think of inline chunks a lot like f-strings.
+    HOF Status         0         1
+    decade                        
+    1950.0      0.263263       NaN
+    1960.0      0.262900  0.286667
+    1970.0      0.253613  0.286938
+    1980.0      0.263370  0.281273
+    1990.0      0.262046  0.288769
+    2000.0      0.268609  0.297643
+    2010.0      0.265191  0.296667
 
-The intercept of the model is 0.266 and the slope is -0.017. No matter
-what I do with my data or model, these values will always be up to date
-in my text!
+Here, I had to make a ‘decade’ column using a floor division operator to
+get what decade the players’ last seasone was in. From there, I could
+pivot each decade, organize by HOF Status, and have BA appear in the
+values.
 
-I can also pull out model fit statistics like *R*-squared. The
-*R*-squared for this model is 0.006.
-
-You have the full power of markdown and Python at your disposal. I just
-want to show you some handy markdown things that you might want to use.
-
-I can create **bold** text or *italicized* text.
-
-Functions and variables can be represented in `monospace`. Note that
-those are backticks, not apostrophes.
-
-You can create bullet point lists:
-
-- Item 1
-- Item 2
-  - Subitem 2a
-  - Subitem 2b
-
-You might want to include links within your document. You can use html
-links like this: <a href="https://www.example.com">Example</a> or
-markdown links like this: [Example](https://www.example.com).
+The numbers here kind of debunked the theory that batting average is
+trending down over time. This was surprising to me. This could be due to
+sample size of the dataset, but interesting nontheless.
